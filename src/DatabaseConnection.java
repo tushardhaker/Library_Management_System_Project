@@ -3,9 +3,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DatabaseConnection {
-    private static final String URL = "jdbc:mysql://127.0.0.1:3306/Library";
-    private static final String USER = "root";  // Change if needed
-    private static final String PASSWORD = "Tushar@5611";  // Set your MySQL password
+    private static final String URL = "Enter URL ";
+    private static final String USER = "Enter username";  // Change if needed
+    private static final String PASSWORD = "Enter Your Password";  // Set your MySQL password
 
     public static Connection getConnection() {
         try {
