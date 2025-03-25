@@ -1,55 +1,31 @@
 CREATE DATABASE Library;
-
-
+ Drop DataBase Library ;
 USE Library;
 
 -- Users Table
 CREATE TABLE User (
-User_ID int auto_increment unique,
-    email Varchar(200) unique PRIMARY KEY,
+    User_ID INT AUTO_INCREMENT PRIMARY KEY,  -- Changed from unique to PRIMARY KEY
+    email VARCHAR(200) UNIQUE,
     name VARCHAR(255) NOT NULL,
     Password VARCHAR(255) NOT NULL,
-    Role ENUM('Admin', 'Librarian', 'User') DEFAULT 'User'
+    Role ENUM('SUPER_ADMIN', 'ADMIN', 'USER') DEFAULT 'USER'
 );
-
-ALTER TABLE User MODIFY Role ENUM('SUPER_ADMIN', 'ADMIN', 'USER');
-
-select * from User;
-
-select * from Books;
-
-SET SQl_safe_updates = 0;
+-- SELECT * FROM IssuedBooks WHERE User_ID = '17';  -- Replace 16 with your actual user ID
 
 -- Books Table
 CREATE TABLE Books (
-    SN int auto_increment unique,
-    Book_id INT  PRIMARY KEY,
+    SN INT AUTO_INCREMENT UNIQUE,
+    Book_ID INT PRIMARY KEY,
     Title VARCHAR(255) NOT NULL,
     Author VARCHAR(255) NOT NULL,
-   -- Quantity int,
+    Quantity INT DEFAULT 1,
     Status ENUM('Available', 'Issued') DEFAULT 'Available'
 );
-
-Alter table Books add column  Quantity int default 1;
-
-
-
+Alter table Books Add column Topic VARCHAR(255) NOT NULL;
 -- Transactions Table
 CREATE TABLE Transaction (
- 
-    User_ID int auto_increment unique,
-     Book_id INT  primary key,
-    IssueDate DATE DEFAULT (CURRENT_DATE),
-    ReturnDate DATE,
-    FOREIGN KEY (User_ID) REFERENCES User(User_ID),
-    FOREIGN KEY (Book_id) REFERENCES Books(Book_id)
-);
-
-Select*from transaction;
--- issueBook Table
-CREATE TABLE IF NOT EXISTS IssuedBooks (
-    -- Issue_ID INT PRIMARY KEY AUTO_INCREMENT,
-    User_ID int auto_increment unique,
+    Transaction_ID INT AUTO_INCREMENT PRIMARY KEY, -- Added an explicit PK
+    User_ID INT,   -- Removed auto_increment and unique constraint
     Book_ID INT,
     IssueDate DATE DEFAULT (CURRENT_DATE),
     ReturnDate DATE NULL,
@@ -57,14 +33,28 @@ CREATE TABLE IF NOT EXISTS IssuedBooks (
     FOREIGN KEY (Book_ID) REFERENCES Books(Book_ID) ON DELETE CASCADE
 );
 
-select*from issuedBooks;
+-- IssuedBooks Table
+CREATE TABLE IF NOT EXISTS IssuedBooks (
+    Issue_ID INT AUTO_INCREMENT PRIMARY KEY, -- Added an explicit PK
+    User_ID INT,   -- Removed auto_increment and unique constraint
+    Book_ID INT,
+    IssueDate DATE DEFAULT (CURRENT_DATE),
+    ReturnDate DATE NULL,
+    FOREIGN KEY (User_ID) REFERENCES User(User_ID) ON DELETE CASCADE,
+    FOREIGN KEY (Book_ID) REFERENCES Books(Book_ID) ON DELETE CASCADE
+);
+Alter table IssuedBooks drop column Issue_ID ;
+-- SHOW CREATE TABLE IssuedBooks;
+-- Drop table issuedbooks;
+ALTER TABLE IssuedBooks 
+ADD CONSTRAINT unique_issue UNIQUE (User_ID, Book_ID, ReturnDate);
+Alter table issuedbooks drop column unique_issue;
+
 -- Feedback Table
 CREATE TABLE Feedback (
-    -- Feedback_ID INT AUTO_INCREMENT PRIMARY KEY,
-   email Varchar(200) unique PRIMARY KEY,
+    Feedback_ID INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(200),
     Feedback TEXT NOT NULL,
     Timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (email) REFERENCES User(email) ON DELETE CASCADE
 );
-drop table Feedback;
-select*from Feedback;
